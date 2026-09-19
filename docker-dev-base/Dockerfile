@@ -37,6 +37,7 @@ RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linu
     && rm nvim-linux-x86_64.tar.gz
 
 # --- yazi
+RUN curl -fsSL https://yazi-rs.github.io/builds/yazi-keyring.gpg | tee /usr/share/keyrings/yazi-keyring.gpg >/dev/null && echo 'deb [signed-by=/usr/share/keyrings/yazi-keyring.gpg] https://yazi-rs.github.io/builds/ stable main' | tee /etc/apt/sources.list.d/yazi.list >/dev/null
 RUN apt-get update && apt-get install -y yazi
 
 # --- Python: mason and several LSPs (pyright's runtime, formatters) expect python3/pip ---
