@@ -3,7 +3,7 @@ FROM ${BASE_IMAGE}
 
 USER root
 
-RUN apt-get update && apt-get install pyton13
+RUN apt-get update && apt-get install python13
 
 USER coder
 WORKDIR /home/coder
