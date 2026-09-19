@@ -45,3 +45,25 @@ jobs:
           push: true
           tags: ghcr.io/${{ env.OWNER_LC }}/dev-node:latest
           build-args: BASE_IMAGE=ghcr.io/${{ env.OWNER_LC }}/dev-base:latest
+
+  python13:
+      needs: base
+      runs-on: ubuntu-latest
+      permissions:
+        contents: read
+        packages: write
+      steps:
+        - uses: actions/checkout@v4
+        - name: Set lowercase repository owner
+          run: echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
+        - uses: docker/login-action@v3
+          with:
+            registry: ghcr.io
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+        - uses: docker/build-push-action@v6
+          with:
+            context: ./docker-dev-python13
+            push: true
+            tags: ghcr.io/${{ env.OWNER_LC }}/dev-python13:latest
+            build-args: BASE_IMAGE=ghcr.io/${{ env.OWNER_LC }}/dev-base:latest
