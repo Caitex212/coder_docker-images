@@ -37,11 +37,10 @@ RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linu
     && rm nvim-linux-x86_64.tar.gz
 
 # --- yazi
-RUN curl -LO https://github.com/sxyazi/yazi/releases/latest/download/yazi-x86_64-unknown-linux-gnu.deb \
-    && apt-get update \
-    && apt-get install -y ./yazi-x86_64-unknown-linux-gnu.deb \
-    && rm -f yazi-x86_64-unknown-linux-gnu.deb \
-    && rm -rf /var/lib/apt/lists/* \
+RUN curl -LO https://github.com/sxyazi/yazi/releases/latest/download/yazi-x86_64-unknown-linux-gnu.zip \
+    && unzip -j yazi-x86_64-unknown-linux-gnu.zip -d /usr/local/bin '*/yazi' '*/ya' \
+    && chmod +x /usr/local/bin/yazi /usr/local/bin/ya \
+    && rm -f yazi-x86_64-unknown-linux-gnu.zip \
     && yazi --version
 
 # --- Python: mason and several LSPs (pyright's runtime, formatters) expect python3/pip ---
