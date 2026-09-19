@@ -44,6 +44,18 @@ RUN curl -LO https://github.com/sxyazi/yazi/releases/latest/download/yazi-x86_64
     && rm -f yazi-x86_64-unknown-linux-gnu.zip \
     && yazi --version
 
+# Optional preview/navigation helpers yazi uses when present (image/video/pdf previews, fuzzy
+# jump, smart cd). fd/ripgrep are already installed above.
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    7zip \
+    jq \
+    poppler-utils \
+    fzf \
+    zoxide \
+    imagemagick \
+    && rm -rf /var/lib/apt/lists/*
+
 # --- Python: mason and several LSPs (pyright's runtime, formatters) expect python3/pip ---
 RUN apt-get update && apt-get install -y python3 python3-pip python3-venv \
     && rm -rf /var/lib/apt/lists/*
@@ -76,6 +88,8 @@ function y() {
   fi
   rm -f -- "$tmp"
 }
+
+eval "$(zoxide init bash)"
 YAZI_Y_FUNC
 EOF
 USER coder
