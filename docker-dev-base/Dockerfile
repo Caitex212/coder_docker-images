@@ -23,6 +23,13 @@ RUN apt-get update && apt-get install -y \
 # Ubuntu ships fd as `fdfind` — Kickstart/telescope expects `fd` on PATH
 RUN ln -sf $(which fdfind) /usr/local/bin/fd
 
+# --- tree-sitter
+RUN curl -LO https://github.com/tree-sitter/tree-sitter/releases/latest/download/tree-sitter-linux-x64.gz \
+    && gunzip tree-sitter-linux-x64.gz \
+    && install -m 755 tree-sitter-linux-x64 /usr/local/bin/tree-sitter \
+    && rm -f tree-sitter-linux-x64 \
+    && tree-sitter --version
+
 # --- Neovim: grab a recent release build, apt's version is usually too old for lazy.nvim/blink.cmp ---
 RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz \
     && tar -C /opt -xzf nvim-linux-x86_64.tar.gz \
