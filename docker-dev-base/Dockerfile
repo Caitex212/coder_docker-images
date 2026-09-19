@@ -65,6 +65,6 @@ COPY --chown=coder:coder nvim-config /home/coder/.config/nvim
 RUN echo 'set -g mouse on\nset -g history-limit 10000\nset -g default-terminal "tmux-256color"' > /home/coder/.tmux.conf
 
 # --- yazi cd-on-exit helper: lets `y` open yazi and cd your shell into wherever you navigated to ---
-RUN printf '\nfunction y() {\n  local tmp="$(mktemp -t "yazi-cwd.XXXXX")"\n  command yazi "$@" --cwd-file="$tmp"\n  if cwd="$(<"$tmp")" \&\& [ -n "$cwd" ] \&\& [ "$cwd" != "$PWD" ]; then\n    builtin cd -- "$cwd"\n  fi\n  rm -f -- "$tmp"\n}\n' >> /home/coder/.bashrc
+RUN printf '\nfunction y() {\n  local tmp="$(mktemp -t "yazi-cwd.XXXXX")"\n  command yazi "$@" --cwd-file="$tmp"\n  if cwd="$(<"$tmp")" \&\& [ -n "$cwd" ] \&\& [ "$cwd" != "$PWD" ]; then\n    builtin cd -- "$cwd"\n  fi\n  rm -f -- "$tmp"\n}\n' >> /etc/bash.bashrc
 
 CMD ["sleep", "infinity"]
