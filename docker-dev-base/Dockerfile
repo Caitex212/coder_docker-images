@@ -36,6 +36,9 @@ RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linu
     && ln -sf /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim \
     && rm nvim-linux-x86_64.tar.gz
 
+# --- yazi
+RUN apt-get update && apt-get install -y yazi
+
 # --- Python: mason and several LSPs (pyright's runtime, formatters) expect python3/pip ---
 RUN apt-get update && apt-get install -y python3 python3-pip python3-venv \
     && rm -rf /var/lib/apt/lists/*
