@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.7
 FROM codercom/enterprise-base:ubuntu
 
 USER root
@@ -63,7 +64,20 @@ COPY --chown=coder:coder nvim-config /home/coder/.config/nvim
 # --- Minimal tmux config so sessions behave sanely by default ---
 RUN echo 'set -g mouse on\nset -g history-limit 10000\nset -g default-terminal "tmux-256color"' > /home/coder/.tmux.conf
 
-# --- yazi cd-on-exit helper: lets `y` open yazi and cd your shell into wherever you navigated to ---
-RUN printf '\nfunction y() {\n  local tmp="$(mktemp -t "yazi-cwd.XXXXX")"\n  command yazi "$@" --cwd-file="$tmp"\n  if cwd="$(<"$tmp")" \&\& [ -n "$cwd" ] \&\& [ "$cwd" != "$PWD" ]; then\n    builtin cd -- "$cwd"\n  fi\n  rm -f -- "$tmp"\n}\n' >> /etc/bash.bashrc
+USER root
+RUN <<'EOF'
+cat >> /etc/bash.bashrc <<'YAZI_Y_FUNC'
+
+function y() {
+  local tmp="$(mktemp -t "yazi-cwd.XXXXX")"
+  command yazi "$@" --cwd-file="$tmp"
+  if cwd="$(<"$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+    builtin cd -- "$cwd"
+  fi
+  rm -f -- "$tmp"
+}
+YAZI_Y_FUNC
+EOF
+USER coder
 
 CMD ["sleep", "infinity"]
