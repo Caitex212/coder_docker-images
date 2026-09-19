@@ -37,8 +37,12 @@ RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linu
     && rm nvim-linux-x86_64.tar.gz
 
 # --- yazi
-RUN curl -fsSL https://yazi-rs.github.io/builds/yazi-keyring.gpg | tee /usr/share/keyrings/yazi-keyring.gpg >/dev/null && echo 'deb [signed-by=/usr/share/keyrings/yazi-keyring.gpg] https://yazi-rs.github.io/builds/ stable main' | tee /etc/apt/sources.list.d/yazi.list >/dev/null
-RUN apt-get update && apt-get install -y yazi
+RUN curl -LO https://github.com/sxyazi/yazi/releases/latest/download/yazi-x86_64-unknown-linux-gnu.deb \
+    && apt-get update \
+    && apt-get install -y ./yazi-x86_64-unknown-linux-gnu.deb \
+    && rm -f yazi-x86_64-unknown-linux-gnu.deb \
+    && rm -rf /var/lib/apt/lists/* \
+    && yazi --version
 
 # --- Python: mason and several LSPs (pyright's runtime, formatters) expect python3/pip ---
 RUN apt-get update && apt-get install -y python3 python3-pip python3-venv \
@@ -59,5 +63,8 @@ COPY --chown=coder:coder nvim-config /home/coder/.config/nvim
 
 # --- Minimal tmux config so sessions behave sanely by default ---
 RUN echo 'set -g mouse on\nset -g history-limit 10000\nset -g default-terminal "tmux-256color"' > /home/coder/.tmux.conf
+
+# --- yazi cd-on-exit helper: lets `y` open yazi and cd your shell into wherever you navigated to ---
+RUN printf '\nfunction y() {\n  local tmp="$(mktemp -t "yazi-cwd.XXXXX")"\n  command yazi "$@" --cwd-file="$tmp"\n  if cwd="$(<"$tmp")" \&\& [ -n "$cwd" ] \&\& [ "$cwd" != "$PWD" ]; then\n    builtin cd -- "$cwd"\n  fi\n  rm -f -- "$tmp"\n}\n' >> /home/coder/.bashrc
 
 CMD ["sleep", "infinity"]
