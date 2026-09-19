@@ -56,10 +56,4 @@ COPY --chown=coder:coder nvim-config /home/coder/.config/nvim
 # --- Minimal tmux config so sessions behave sanely by default ---
 RUN echo 'set -g mouse on\nset -g history-limit 10000\nset -g default-terminal "tmux-256color"' > /home/coder/.tmux.conf
 
-# --- Pre-fetch plugins so the first `nvim` launch in a new workspace isn't slow ---
-# This runs lazy.nvim's sync headlessly at build time. It can't install LSPs via Mason here
-# (no reliable network assumptions at build time in some setups), so Mason tools install on
-# first real launch instead — that part will still take a minute the very first time.
-RUN nvim --headless "+Lazy! sync" +qa || true
-
 CMD ["sleep", "infinity"]
